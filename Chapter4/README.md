@@ -1,3 +1,5 @@
+#### ⚠️ DISCLAIMER ⚠️ - These are my answers but were never checked. They might be all false (or right). I also encourage you to try the exercises first and then look at the answers.
+
 **Q1.A**
 - 1 warp is 32 threads and there is 128 threads so 4 warps per blocks.
 
