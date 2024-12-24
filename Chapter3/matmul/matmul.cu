@@ -19,6 +19,52 @@ __global__ void squareMatMulKernel(float *M, float *N, float *P, int size)
     }
 }
 
+__global__ void rowSquareMatMulKernel(float *M, float *N, float *P, int size)
+{
+    int row = blockDim.y * blockIdx.y + threadIdx.y;
+
+    if (row < size)
+    {
+        for (int n = 0; n < size; n++){
+            float Pvalue = 0;
+            for (int i = 0; i < size; i++)
+            {
+                Pvalue += M[row * size + i] * N[n + i * size];
+            }
+            P[row * size + n] = Pvalue;
+        }
+    }
+}
+
+__global__ void colSquareMatMulKernel(float *M, float *N, float *P, int size)
+{
+    int col = blockDim.x * blockIdx.x + threadIdx.x;
+
+    if (col < size)
+    {
+        for (int n = 0; n < size; n++){
+            float Pvalue = 0;
+            for (int i = 0; i < size; i++)
+            {
+                Pvalue += M[n * size + i] * N[col + i * size];
+            }
+            P[n * size + col] = Pvalue;
+        }
+    }
+}
+
+__global__ void squareVecMatMulKernel(float *M, float *N, float *P, int size){
+    int row = blockDim.y * blockIdx.y + threadIdx.y;
+
+    if (row < size){
+        float Pvalue = 0;
+        for (int i = 0; i < size; i++){
+            Pvalue += M[row * size + i] * N[row];
+        }
+        P[row] = Pvalue;
+    }
+}
+
 void squareMatMul(float *M, float *N, float *P, int size)
 {
     // Compute size
@@ -56,8 +102,8 @@ void squareMatMul(float *M, float *N, float *P, int size)
 int main()
 {
     const int size = 3;
-    float M[] = {1, 1, 1, 2, 2, 2, 3, 3, 3};
-    float N[] = {4, 4, 4, 5, 5, 5, 6, 6, 6};
+    float M[] = {1, 0, 0, 0, 1, 0, 0, 0, 1};
+    float N[] = {1, 2, 3, 4, 5, 6, 7, 8, 9};
     float P[size * size];
 
     squareMatMul(M, N, P, size);
